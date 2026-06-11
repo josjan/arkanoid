@@ -133,6 +133,35 @@ function updateBall() {
     ball.vy = Math.abs(ball.vy);
   }
   // Floor — life loss handled in Step 7
+
+  collidePaddle();
+}
+
+function collidePaddle() {
+  // Only check when ball is moving downward
+  if (ball.vy <= 0) return;
+
+  const bLeft   = ball.x - ball.w / 2;
+  const bRight  = ball.x + ball.w / 2;
+  const bTop    = ball.y - ball.h / 2;
+  const bBottom = ball.y + ball.h / 2;
+
+  const overlapX = bRight > paddle.x && bLeft < paddle.x + paddle.w;
+  const overlapY = bBottom >= paddle.y && bTop < paddle.y + paddle.h;
+
+  if (!overlapX || !overlapY) return;
+
+  // Place ball flush on top of paddle to avoid tunnelling
+  ball.y = paddle.y - ball.h / 2;
+
+  // Adjust vx by hit position (-1 = left edge, 0 = centre, +1 = right edge)
+  const hitPos = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+  const speed  = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+  ball.vx = hitPos * speed;
+  ball.vy = -Math.abs(ball.vy);
+
+  // Prevent perfectly vertical trajectory
+  if (Math.abs(ball.vx) < 1) ball.vx = ball.vx >= 0 ? 1 : -1;
 }
 
 // ── Draw ───────────────────────────────────────────────────────────────────
