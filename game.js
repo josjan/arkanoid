@@ -73,6 +73,10 @@ function snapBallToPaddle() {
 
 // ── Input ──────────────────────────────────────────────────────────────────
 
+canvas.addEventListener('click', () => {
+  if (state.phase === 'playing' && ball.attached) ball.attached = false;
+});
+
 canvas.addEventListener('mousemove', (e) => {
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
@@ -81,8 +85,17 @@ canvas.addEventListener('mousemove', (e) => {
   if (ball.attached) snapBallToPaddle();
 });
 
-window.addEventListener('keydown', (e) => { keys[e.code] = true; });
-window.addEventListener('keyup',   (e) => { keys[e.code] = false; });
+const GAME_KEYS = ['Space', 'ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD'];
+
+window.addEventListener('keydown', (e) => {
+  if (GAME_KEYS.includes(e.code)) e.preventDefault();
+  keys[e.code] = true;
+  if (e.code === 'Space' && state.phase === 'playing' && ball.attached) {
+    ball.attached = false;
+  }
+});
+
+window.addEventListener('keyup', (e) => { keys[e.code] = false; });
 
 function clampPaddle() {
   if (paddle.x < 0)                   paddle.x = 0;
@@ -94,6 +107,32 @@ function updatePaddle() {
   if (keys['ArrowRight'] || keys['KeyD']) paddle.x += paddle.speed;
   clampPaddle();
   if (ball.attached) snapBallToPaddle();
+}
+
+// ── Ball physics ──────────────────────────────────────────────────────────
+
+function updateBall() {
+  if (ball.attached) return;
+
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  // Left wall
+  if (ball.x - ball.w / 2 <= 0) {
+    ball.x = ball.w / 2;
+    ball.vx = Math.abs(ball.vx);
+  }
+  // Right wall
+  if (ball.x + ball.w / 2 >= CANVAS_W) {
+    ball.x = CANVAS_W - ball.w / 2;
+    ball.vx = -Math.abs(ball.vx);
+  }
+  // Ceiling
+  if (ball.y - ball.h / 2 <= 0) {
+    ball.y = ball.h / 2;
+    ball.vy = Math.abs(ball.vy);
+  }
+  // Floor — life loss handled in Step 7
 }
 
 // ── Draw ───────────────────────────────────────────────────────────────────
@@ -116,6 +155,7 @@ function draw() {
 
 function gameLoop() {
   updatePaddle();
+  updateBall();
   draw();
   requestAnimationFrame(gameLoop);
 }
