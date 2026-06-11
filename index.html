@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arkanoid</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #game-container {
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .overlay.visible {
+      display: flex;
+    }
+
+    .overlay h2 {
+      font-size: 48px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    #overlay-victory h2  { color: #ffd700; }
+    #overlay-gameover h2 { color: #ff4444; }
+
+    .overlay button {
+      padding: 12px 32px;
+      font-size: 20px;
+      background: #fff;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .overlay button:hover {
+      background: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="overlay-victory" class="overlay">
+      <h2>¡Victoria!</h2>
+      <button id="btn-victory">Jugar de nuevo</button>
+    </div>
+
+    <div id="overlay-gameover" class="overlay">
+      <h2>Game Over</h2>
+      <button id="btn-gameover">Jugar de nuevo</button>
+    </div>
+  </div>
+
+  <script src="assets/spritesheet.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
