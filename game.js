@@ -45,6 +45,9 @@ const ball = {
 
 const blocks = [];
 
+// tracks which keys are held down this frame
+const keys = {};
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 function initBlocks() {
@@ -68,6 +71,31 @@ function snapBallToPaddle() {
   ball.y = paddle.y - ball.h / 2;
 }
 
+// ── Input ──────────────────────────────────────────────────────────────────
+
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  paddle.x = mouseX - paddle.w / 2;
+  clampPaddle();
+  if (ball.attached) snapBallToPaddle();
+});
+
+window.addEventListener('keydown', (e) => { keys[e.code] = true; });
+window.addEventListener('keyup',   (e) => { keys[e.code] = false; });
+
+function clampPaddle() {
+  if (paddle.x < 0)                   paddle.x = 0;
+  if (paddle.x > CANVAS_W - paddle.w) paddle.x = CANVAS_W - paddle.w;
+}
+
+function updatePaddle() {
+  if (keys['ArrowLeft']  || keys['KeyA']) paddle.x -= paddle.speed;
+  if (keys['ArrowRight'] || keys['KeyD']) paddle.x += paddle.speed;
+  clampPaddle();
+  if (ball.attached) snapBallToPaddle();
+}
+
 // ── Draw ───────────────────────────────────────────────────────────────────
 
 function draw() {
@@ -87,6 +115,7 @@ function draw() {
 // ── Game loop ──────────────────────────────────────────────────────────────
 
 function gameLoop() {
+  updatePaddle();
   draw();
   requestAnimationFrame(gameLoop);
 }
