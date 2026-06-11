@@ -1,6 +1,6 @@
 # SPEC 01 — MVP Arkanoid jugable
 
-> **Estado:** Borrador · **Depende de:** — · **Fecha:** 2026-06-11
+> **Estado:** Implementado · **Depende de:** — · **Fecha:** 2026-06-11
 > **Objetivo:** Construir un Arkanoid jugable de un solo nivel con 3 vidas, puntuación básica y overlays de victoria/game over, usando los assets del spritesheet existente.
 
 ## Alcance
