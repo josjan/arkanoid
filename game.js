@@ -134,7 +134,27 @@ function updateBall() {
   }
   // Floor — life loss handled in Step 7
 
+  collideBlocks();
   collidePaddle();
+}
+
+function collideBlocks() {
+  const bLeft   = ball.x - ball.w / 2;
+  const bRight  = ball.x + ball.w / 2;
+  const bTop    = ball.y - ball.h / 2;
+  const bBottom = ball.y + ball.h / 2;
+
+  for (const block of blocks) {
+    if (!block.alive) continue;
+
+    if (bRight > block.x && bLeft < block.x + block.w &&
+        bBottom > block.y && bTop < block.y + block.h) {
+      block.alive     = false;
+      state.score    += 10;
+      ball.vy        *= -1;
+      break; // one block per frame
+    }
+  }
 }
 
 function collidePaddle() {
