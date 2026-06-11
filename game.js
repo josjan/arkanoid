@@ -132,10 +132,28 @@ function updateBall() {
     ball.y = ball.h / 2;
     ball.vy = Math.abs(ball.vy);
   }
-  // Floor — life loss handled in Step 7
+  // Floor — ball lost
+  if (ball.y - ball.h / 2 > CANVAS_H) {
+    loseLife();
+    return;
+  }
 
   collideBlocks();
   collidePaddle();
+}
+
+function loseLife() {
+  state.lives -= 1;
+  if (state.lives <= 0) {
+    state.phase = 'gameover';
+  } else {
+    ball.attached = true;
+    snapBallToPaddle();
+  }
+}
+
+function checkVictory() {
+  if (blocks.every(b => !b.alive)) state.phase = 'victory';
 }
 
 function collideBlocks() {
@@ -149,9 +167,10 @@ function collideBlocks() {
 
     if (bRight > block.x && bLeft < block.x + block.w &&
         bBottom > block.y && bTop < block.y + block.h) {
-      block.alive     = false;
-      state.score    += 10;
-      ball.vy        *= -1;
+      block.alive  = false;
+      state.score += 10;
+      ball.vy     *= -1;
+      checkVictory();
       break; // one block per frame
     }
   }
@@ -203,8 +222,10 @@ function draw() {
 // ── Game loop ──────────────────────────────────────────────────────────────
 
 function gameLoop() {
-  updatePaddle();
-  updateBall();
+  if (state.phase === 'playing') {
+    updatePaddle();
+    updateBall();
+  }
   draw();
   requestAnimationFrame(gameLoop);
 }
