@@ -12,8 +12,10 @@ const BLOCK_LEFT   = (CANVAS_W - (BLOCK_COLS * BLOCK_W + (BLOCK_COLS - 1) * BLOC
 
 const ROW_COLORS = ['red', 'cyan', 'green', 'magenta', 'yellow', 'hotpink'];
 
-const canvas = document.getElementById('gameCanvas');
-const ctx    = canvas.getContext('2d');
+const canvas          = document.getElementById('gameCanvas');
+const ctx             = canvas.getContext('2d');
+const overlayVictory  = document.getElementById('overlay-victory');
+const overlayGameover = document.getElementById('overlay-gameover');
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -146,6 +148,7 @@ function loseLife() {
   state.lives -= 1;
   if (state.lives <= 0) {
     state.phase = 'gameover';
+    showOverlay('gameover');
   } else {
     ball.attached = true;
     snapBallToPaddle();
@@ -153,7 +156,10 @@ function loseLife() {
 }
 
 function checkVictory() {
-  if (blocks.every(b => !b.alive)) state.phase = 'victory';
+  if (blocks.every(b => !b.alive)) {
+    state.phase = 'victory';
+    showOverlay('victory');
+  }
 }
 
 function collideBlocks() {
@@ -243,6 +249,34 @@ function gameLoop() {
   draw();
   requestAnimationFrame(gameLoop);
 }
+
+// ── Overlays & reset ──────────────────────────────────────────────────────
+
+function showOverlay(phase) {
+  if (phase === 'victory')  overlayVictory.classList.add('visible');
+  if (phase === 'gameover') overlayGameover.classList.add('visible');
+}
+
+function resetGame() {
+  overlayVictory.classList.remove('visible');
+  overlayGameover.classList.remove('visible');
+
+  state.phase = 'playing';
+  state.lives = 3;
+  state.score = 0;
+
+  paddle.x = 350;
+
+  ball.vx       =  4;
+  ball.vy       = -4;
+  ball.attached = true;
+
+  initBlocks();
+  snapBallToPaddle();
+}
+
+document.getElementById('btn-victory').addEventListener('click',  resetGame);
+document.getElementById('btn-gameover').addEventListener('click', resetGame);
 
 // ── Boot ───────────────────────────────────────────────────────────────────
 
