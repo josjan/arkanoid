@@ -205,6 +205,18 @@ function collidePaddle() {
 
 // ── Draw ───────────────────────────────────────────────────────────────────
 
+function drawHUD() {
+  ctx.font = 'bold 18px Arial';
+  ctx.fillStyle = '#fff';
+  ctx.textBaseline = 'top';
+
+  ctx.textAlign = 'left';
+  ctx.fillText('Score: ' + state.score, 12, 12);
+
+  ctx.textAlign = 'right';
+  ctx.fillText('Lives: ' + state.lives, CANVAS_W - 12, 12);
+}
+
 function draw() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
@@ -217,6 +229,8 @@ function draw() {
 
   drawSprite(ctx, 'paddle', paddle.x, paddle.y, paddle.w, paddle.h);
   drawSprite(ctx, 'ball', ball.x - ball.w / 2, ball.y - ball.h / 2, ball.w, ball.h);
+
+  drawHUD();
 }
 
 // ── Game loop ──────────────────────────────────────────────────────────────
