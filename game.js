@@ -211,6 +211,9 @@ function collidePaddle() {
 
 // ── Draw ───────────────────────────────────────────────────────────────────
 
+const LIFE_ICON_SIZE = 18;
+const LIFE_ICON_GAP  = 6;
+
 function drawHUD() {
   ctx.font = 'bold 18px Arial';
   ctx.fillStyle = '#fff';
@@ -219,12 +222,14 @@ function drawHUD() {
   ctx.textAlign = 'left';
   ctx.fillText('Score: ' + state.score, 12, 12);
 
-  ctx.textAlign = 'right';
-  ctx.fillText('Lives: ' + state.lives, CANVAS_W - 12, 12);
+  for (let i = 0; i < state.lives; i++) {
+    const x = CANVAS_W - 12 - LIFE_ICON_SIZE - i * (LIFE_ICON_SIZE + LIFE_ICON_GAP);
+    drawSprite(ctx, 'ball', x, 12, LIFE_ICON_SIZE, LIFE_ICON_SIZE);
+  }
 }
 
 function draw() {
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = '#4a4848';
   ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
   for (const b of blocks) {
